@@ -6,10 +6,39 @@ const Button = ({ name, handleClick }) => (
     <button onClick={handleClick}>{name}</button>
 );
 
-const Statistics = ({ name, value, unit }) => (
-    <p>
-        {name} {value} {unit}
-    </p>
+const Statistics = ({ good, neutral, bad }) => {
+    const total = good + neutral + bad;
+
+    if (total === 0) {
+        return <p>No feedback given</p>;
+    }
+
+    return (
+        <table>
+            <StatisticsLine name="good" value={good} />
+            <StatisticsLine name="neutral" value={neutral} />
+            <StatisticsLine name="bad" value={bad} />
+            <StatisticsLine name="all" value={total} />
+            <StatisticsLine
+                name="average"
+                value={(good * 1 + bad * -1) / total}
+            />
+            <StatisticsLine
+                name="positive"
+                value={(good / total) * 100}
+                unit="%"
+            />
+        </table>
+    );
+};
+
+const StatisticsLine = ({ name, value, unit }) => (
+    <tr>
+        <td>{name}</td>
+        <td>
+            {value} {unit}
+        </td>
+    </tr>
 );
 
 const App = () => {
@@ -17,22 +46,6 @@ const App = () => {
     const [good, setGood] = useState(0);
     const [neutral, setNeutral] = useState(0);
     const [bad, setBad] = useState(0);
-
-    if (good === 0 && neutral === 0 && bad === 0) {
-        return (
-            <div>
-                <Header title="give feedback" />
-                <Button name="good" handleClick={() => setGood(good + 1)} />
-                <Button
-                    name="neutral"
-                    handleClick={() => setNeutral(neutral + 1)}
-                />
-                <Button name="bad" handleClick={() => setBad(bad + 1)} />
-                <Header title="statistics" />
-                <p>No feedback given</p>
-            </div>
-        );
-    }
     return (
         <div>
             <Header title="give feedback" />
@@ -43,19 +56,7 @@ const App = () => {
             />
             <Button name="bad" handleClick={() => setBad(bad + 1)} />
             <Header title="statistics" />
-            <Statistics name="good" value={good} />
-            <Statistics name="neutral" value={neutral} />
-            <Statistics name="bad" value={bad} />
-            <Statistics name="all" value={good + neutral + bad} />
-            <Statistics
-                name="average"
-                value={(good * 1 + bad * -1) / (good + neutral + bad)}
-            />
-            <Statistics
-                name="positive"
-                value={(good / (good + neutral + bad)) * 100}
-                unit="%"
-            />
+            <Statistics good={good} neutral={neutral} bad={bad} />
         </div>
     );
 };
