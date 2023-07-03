@@ -31,6 +31,15 @@ const App = () => {
             <Content name="good" count={good} />
             <Content name="neutral" count={neutral} />
             <Content name="bad" count={bad} />
+            <Content name="all" count={good + neutral + bad} />
+            <Content
+                name="average"
+                count={(good * 1 + bad * -1) / (good + neutral + bad)}
+            />
+            <Content
+                name="positive"
+                count={(good / (good + neutral + bad)) * 100}
+            />
         </div>
     );
 };
