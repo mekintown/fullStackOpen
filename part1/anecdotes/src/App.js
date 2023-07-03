@@ -4,7 +4,18 @@ const Button = ({ name, handleClick }) => (
     <button onClick={handleClick}>{name}</button>
 );
 
-const Content = ({ name }) => <p>{name}</p>;
+const Anecdote = ({ name, vote }) => {
+    return (
+        <>
+            <div>
+                <p>{name}</p>
+                <p>has {vote} votes</p>
+            </div>
+        </>
+    );
+};
+
+const Header = ({ name }) => <h1>{name}</h1>;
 
 const App = () => {
     const anecdotes = [
@@ -19,17 +30,43 @@ const App = () => {
     ];
 
     const [selected, setSelected] = useState(0);
+    const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
 
-    const randomNumber = (length) => {
-        return Math.floor(Math.random() * length);
+    const randomSelect = (length) => {
+        const tmp = Math.floor(Math.random() * length);
+        console.log(tmp);
+        setSelected(tmp);
     };
+
+    const increaseVote = () => {
+        const newVotes = [...votes];
+        newVotes[selected] += 1;
+        setVotes(newVotes);
+    };
+
+    const mostVoteIdx = ((vote) => {
+        const maxVote = votes.reduce((a, b) => Math.max(a, b));
+        const maxVoteIndex = votes.indexOf(maxVote);
+        return maxVoteIndex;
+    })();
+
     return (
         <div>
-            <Content name={anecdotes[selected]}></Content>
+            <Header name="Anecdote of the day"></Header>
+            <Anecdote
+                name={anecdotes[selected]}
+                vote={votes[selected]}
+            ></Anecdote>
+            <Button name={"vote"} handleClick={() => increaseVote()}></Button>
             <Button
                 name={"next anecdotes"}
-                handleClick={() => setSelected(randomNumber(anecdotes.length))}
+                handleClick={() => randomSelect(anecdotes.length)}
             ></Button>
+            <Header name="Anecdote with most votes"></Header>
+            <Anecdote
+                name={anecdotes[mostVoteIdx]}
+                vote={votes[mostVoteIdx]}
+            ></Anecdote>
         </div>
     );
 };
