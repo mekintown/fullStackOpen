@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Person = ({ name, number }) => {
     return (
@@ -88,6 +89,11 @@ const App = () => {
         setFilter(event.target.value);
     };
 
+    useEffect(() => {
+        axios
+            .get("http://localhost:3001/persons")
+            .then((response) => setPersons(response.data));
+    });
     return (
         <div>
             <h2>Phonebook</h2>
