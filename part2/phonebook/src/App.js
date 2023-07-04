@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const Person = ({ name, number }) => {
     return (
@@ -21,8 +21,10 @@ const Filter = ({ filter, handleFilterChange }) => {
 const PersonForm = ({ persons, setPersons }) => {
     const [newName, setNewName] = useState("");
     const [newNumber, setNumber] = useState("");
+
     const addPerson = (event) => {
         event.preventDefault();
+
         for (const person of persons) {
             if (person.name === newName) {
                 alert(`${newName} is already added to phonebook`);
@@ -34,14 +36,11 @@ const PersonForm = ({ persons, setPersons }) => {
             number: newNumber,
         };
 
-        axios
-            .post("http://localhost:3001/persons", personObject)
-            .then((response) => {
-                setPersons(persons.concat(response.data));
-                setNewName("");
-                setNumber("");
-            });
-        setPersons(persons.concat(personObject));
+        personService.create(personObject).then((returnedPerson) => {
+            setPersons(persons.concat(returnedPerson));
+            setNewName("");
+            setNumber("");
+        });
     };
 
     const handleNameChange = (event) => {
@@ -79,11 +78,7 @@ const Persons = ({ persons, filter }) => (
                     person.name.toLowerCase().includes(filter.toLowerCase())
             )
             .map((person) => (
-                <Person
-                    key={person.id}
-                    name={person.name}
-                    number={person.number}
-                ></Person>
+                <Person name={person.name} number={person.number}></Person>
             ))}
     </ul>
 );
@@ -97,21 +92,18 @@ const App = () => {
     };
 
     useEffect(() => {
-        axios
-            .get("http://localhost:3001/persons")
-            .then((response) => setPersons(response.data));
+        personService
+            .getAll()
+            .then((initialPerson) => setPersons(initialPerson));
     }, []);
     return (
         <div>
             <h2>Phonebook</h2>
-            <Filter
-                filter={filter}
-                handleFilterChange={handleFilterChange}
-            ></Filter>
+            <Filter filter={filter} handleFilterChange={handleFilterChange} />
             <h3>add a new</h3>
-            <PersonForm persons={persons} setPersons={setPersons}></PersonForm>
+            <PersonForm persons={persons} setPersons={setPersons} />
             <h3>Numbers</h3>
-            <Persons persons={persons} filter={filter}></Persons>
+            <Persons persons={persons} filter={filter} />
         </div>
     );
 };
