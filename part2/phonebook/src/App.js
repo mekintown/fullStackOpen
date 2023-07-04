@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
 
-const Person = ({ name, number }) => {
+const Person = ({ name, number, id, setPersons }) => {
+    const handleClick = (event) => {
+        if (window.confirm(`Delete ${event.target}?`)) {
+            personService.remove(id);
+            personService.getAll().then((newPersons) => setPersons(newPersons));
+        }
+    };
     return (
         <p>
-            {name} {number}
+            {name} {number} <button onClick={handleClick}>delete</button>
         </p>
     );
 };
@@ -69,7 +75,7 @@ const PersonForm = ({ persons, setPersons }) => {
     );
 };
 
-const Persons = ({ persons, filter }) => (
+const Persons = ({ persons, filter, setPersons }) => (
     <ul>
         {persons
             .filter(
@@ -78,7 +84,13 @@ const Persons = ({ persons, filter }) => (
                     person.name.toLowerCase().includes(filter.toLowerCase())
             )
             .map((person) => (
-                <Person name={person.name} number={person.number}></Person>
+                <Person
+                    name={person.name}
+                    number={person.number}
+                    key={person.id}
+                    id={person.id}
+                    setPersons={setPersons}
+                ></Person>
             ))}
     </ul>
 );
@@ -103,7 +115,11 @@ const App = () => {
             <h3>add a new</h3>
             <PersonForm persons={persons} setPersons={setPersons} />
             <h3>Numbers</h3>
-            <Persons persons={persons} filter={filter} />
+            <Persons
+                persons={persons}
+                filter={filter}
+                setPersons={setPersons}
+            />
         </div>
     );
 };
