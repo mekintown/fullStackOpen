@@ -31,16 +31,33 @@ const PersonForm = ({ persons, setPersons }) => {
     const addPerson = (event) => {
         event.preventDefault();
 
-        for (const person of persons) {
-            if (person.name === newName) {
-                alert(`${newName} is already added to phonebook`);
-                return;
-            }
-        }
         const personObject = {
             name: newName,
             number: newNumber,
         };
+
+        for (const person of persons) {
+            if (person.name === newName) {
+                if (
+                    window.confirm(
+                        `${person.name} is already added to phonebook, replace the old number with a new one?`
+                    )
+                ) {
+                    personService
+                        .update(person.id, personObject)
+                        .then((returnedPerson) => {
+                            setPersons(
+                                persons.map((oldPerson) =>
+                                    oldPerson.id !== person.id
+                                        ? oldPerson
+                                        : returnedPerson
+                                )
+                            );
+                        });
+                    return;
+                }
+            }
+        }
 
         personService.create(personObject).then((returnedPerson) => {
             setPersons(persons.concat(returnedPerson));
