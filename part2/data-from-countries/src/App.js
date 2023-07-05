@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CountryService from "./service/countries";
+import WeatherService from "./service/weather";
 
 const Form = ({ inputValue, setInputValue }) => {
     const handleInputChange = (event) => {
@@ -16,6 +17,28 @@ const Form = ({ inputValue, setInputValue }) => {
                 onChange={handleInputChange}
             ></input>
         </form>
+    );
+};
+
+const Weather = ({ country }) => {
+    const [weather, setWeather] = useState(null);
+
+    useEffect(() => {
+        WeatherService.getWeather(country).then((responseWeather) => {
+            setWeather(responseWeather);
+        });
+    }, [country]);
+
+    if (!weather) {
+        return <div>Loading weather data...</div>;
+    }
+
+    return (
+        <div>
+            <h2>Weather</h2>
+            <p>temperature {weather.current.temp_c} C</p>
+            <p>wind {weather.current.wind_mph} mph</p>
+        </div>
     );
 };
 
@@ -56,6 +79,7 @@ const Country = ({ country, isOnlyCountry }) => {
                         alt="Flag"
                         style={imgStyle}
                     ></img>
+                    <Weather country={country} />
                 </>
             )}
         </div>
@@ -81,7 +105,6 @@ const Countries = ({ inputValue, allCountries }) => {
 const App = () => {
     const [allCountries, setAllCountries] = useState([]);
     const [inputValue, setInputValue] = useState("");
-
     useEffect(() => {
         CountryService.getAll().then((initialCountries) =>
             setAllCountries(initialCountries)
