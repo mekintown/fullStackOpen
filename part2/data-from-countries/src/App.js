@@ -20,27 +20,46 @@ const Form = ({ inputValue, setInputValue }) => {
 };
 
 const Country = ({ country, isOnlyCountry }) => {
+    const [isShow, setIsShow] = useState(false);
     const imgStyle = {
         maxWidth: "120px",
     };
-    if (isOnlyCountry) {
-        return (
-            <div>
-                <h2>{country.name.common}</h2>
-                <p>capital {country.capital}</p>
-                <p>area {country.area}</p>
+    const handleShowClick = () => {
+        setIsShow(!isShow);
+    };
 
-                <h3>languages:</h3>
-                <ul>
-                    {Object.values(country.languages).map((language) => (
-                        <li>{language}</li>
-                    ))}
-                </ul>
-                <img src={country.flags.svg} alt="Flag" style={imgStyle}></img>
-            </div>
-        );
-    }
-    return <p>{country.name.common}</p>;
+    useEffect(() => {
+        if (isOnlyCountry) {
+            setIsShow(true);
+        }
+    }, [isOnlyCountry]);
+
+    return (
+        <div>
+            <p>{country.name.common}</p>
+            <button onClick={handleShowClick}>
+                {isShow ? "Hide" : "Show"} details
+            </button>
+            {isShow && (
+                <>
+                    <p>capital {country.capital}</p>
+                    <p>area {country.area}</p>
+
+                    <h3>languages:</h3>
+                    <ul>
+                        {Object.values(country.languages).map((language) => (
+                            <li>{language}</li>
+                        ))}
+                    </ul>
+                    <img
+                        src={country.flags.svg}
+                        alt="Flag"
+                        style={imgStyle}
+                    ></img>
+                </>
+            )}
+        </div>
+    );
 };
 
 const Countries = ({ inputValue, allCountries }) => {
@@ -60,7 +79,6 @@ const Countries = ({ inputValue, allCountries }) => {
 };
 
 const App = () => {
-    const [countries, setCountries] = useState([]);
     const [allCountries, setAllCountries] = useState([]);
     const [inputValue, setInputValue] = useState("");
 
