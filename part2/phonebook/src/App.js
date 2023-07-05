@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
 
-const Person = ({ name, number, id, setPersons }) => {
+const Person = ({ name, number, id, setPersons, setErrorMessage }) => {
     const handleClick = (event) => {
         if (window.confirm(`Delete ${event.target}?`)) {
-            personService.remove(id);
+            personService.remove(id).catch((esrror) => {
+                setErrorMessage([
+                    true,
+                    `Information of {newName} has already been removed from server`,
+                ]);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
+            });
             personService.getAll().then((newPersons) => setPersons(newPersons));
         }
     };
@@ -24,7 +32,7 @@ const Filter = ({ filter, handleFilterChange }) => {
     );
 };
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setErrorMessage }) => {
     const [newName, setNewName] = useState("");
     const [newNumber, setNumber] = useState("");
 
@@ -47,12 +55,28 @@ const PersonForm = ({ persons, setPersons }) => {
                         .update(person.id, personObject)
                         .then((returnedPerson) => {
                             setPersons(
-                                persons.map((oldPerson) =>
-                                    oldPerson.id !== person.id
+                                persons.map((oldPerson) => {
+                                    return oldPerson.id !== person.id
                                         ? oldPerson
-                                        : returnedPerson
-                                )
+                                        : returnedPerson;
+                                })
                             );
+                            setErrorMessage([
+                                false,
+                                `Updated the number of {newName}`,
+                            ]);
+                            setTimeout(() => {
+                                setErrorMessage(null);
+                            }, 5000);
+                        })
+                        .catch((error) => {
+                            setErrorMessage([
+                                true,
+                                `Information of {newName} has already been removed from server`,
+                            ]);
+                            setTimeout(() => {
+                                setErrorMessage(null);
+                            }, 5000);
                         });
                     return;
                 }
@@ -63,6 +87,10 @@ const PersonForm = ({ persons, setPersons }) => {
             setPersons(persons.concat(returnedPerson));
             setNewName("");
             setNumber("");
+            setErrorMessage([false, `Added {newName}`]);
+            setTimeout(() => {
+                setErrorMessage(null);
+            }, 5000);
         });
     };
 
@@ -92,7 +120,7 @@ const PersonForm = ({ persons, setPersons }) => {
     );
 };
 
-const Persons = ({ persons, filter, setPersons }) => (
+const Persons = ({ persons, filter, setPersons, setErrorMessage }) => (
     <ul>
         {persons
             .filter(
@@ -107,14 +135,42 @@ const Persons = ({ persons, filter, setPersons }) => (
                     key={person.id}
                     id={person.id}
                     setPersons={setPersons}
+                    setErrorMessage={setErrorMessage}
                 ></Person>
             ))}
     </ul>
 );
 
+const Notification = ({ message }) => {
+    if (message === null) {
+        return null;
+    }
+
+    let style = {};
+    if (message[0]) {
+        style = {
+            color: "red",
+            filter: "drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06))",
+            fontSize: "1rem",
+        };
+    } else {
+        style = {
+            color: "green",
+            filter: "drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06))",
+            fontSize: "1rem",
+        };
+    }
+    return (
+        <div style={style}>
+            <p>{message}</p>
+        </div>
+    );
+};
+
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [filter, setFilter] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
@@ -128,14 +184,20 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={errorMessage} />
             <Filter filter={filter} handleFilterChange={handleFilterChange} />
             <h3>add a new</h3>
-            <PersonForm persons={persons} setPersons={setPersons} />
+            <PersonForm
+                persons={persons}
+                setPersons={setPersons}
+                setErrorMessage={setErrorMessage}
+            />
             <h3>Numbers</h3>
             <Persons
                 persons={persons}
                 filter={filter}
                 setPersons={setPersons}
+                setErrorMessage={setErrorMessage}
             />
         </div>
     );
