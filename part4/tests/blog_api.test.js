@@ -28,12 +28,10 @@ test("unique identifier property of the blog posts is named id", async () => {
 
 test("making an HTTP POST request to the /api/blogs URL successfully creates a new blog post", async () => {
     const blogObject = {
-        _id: "5a422b3a1b54a676234d17f9",
         title: "Canonical string reduction",
         author: "Edsger W. Dijkstra",
         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
         likes: 12,
-        __v: 0,
     };
     await api
         .post("/api/blogs")
@@ -46,6 +44,27 @@ test("making an HTTP POST request to the /api/blogs URL successfully creates a n
 
     const titles = blogsAtEnd.map((blog) => blog.title);
     expect(titles).toContain("Canonical string reduction");
+});
+
+test(" if the likes property is missing from the request, it will default to the value 0", async () => {
+    const blogObjectWithMissingLikes = {
+        title: "Canonical At string reduction",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    };
+
+    const response = await api
+        .post("/api/blogs")
+        .send(blogObjectWithMissingLikes)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
+
+    const createdBlog = response.body;
+
+    expect(createdBlog.likes).toBe(0);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 });
 
 afterAll(async () => {
