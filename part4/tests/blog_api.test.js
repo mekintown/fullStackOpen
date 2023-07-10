@@ -85,6 +85,17 @@ test("if the title or author properties are missing from the request data, the b
     await api.post("/api/blogs").send(blogObjectWithMissingAuthor).expect(400);
 }, 10000);
 
+test("delete blog", async () => {
+    const initialBlogs = await helper.blogsInDb();
+    const blogToDelete = initialBlogs[0]; // Assuming there is at least one blog post
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1);
+    expect(blogsAtEnd).not.toContainEqual(blogToDelete);
+});
+
 afterAll(async () => {
     await mongoose.connection.close();
 });
