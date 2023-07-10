@@ -67,6 +67,24 @@ test(" if the likes property is missing from the request, it will default to the
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
 });
 
+test("if the title or author properties are missing from the request data, the backend responds to the request with the status code 400 Bad Request.", async () => {
+    const blogObjectWithMissingTitle = {
+        author: "Edsger W. Dijkstra",
+        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        likes: 12,
+    };
+
+    await api.post("/api/blogs").send(blogObjectWithMissingTitle).expect(400);
+
+    const blogObjectWithMissingAuthor = {
+        title: "Canonical At string reduction",
+        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        likes: 12,
+    };
+
+    await api.post("/api/blogs").send(blogObjectWithMissingAuthor).expect(400);
+}, 10000);
+
 afterAll(async () => {
     await mongoose.connection.close();
 });
