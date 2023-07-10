@@ -9,9 +9,9 @@ const middleware = require("./utils/middleware");
 const app = express();
 
 mongoose
-    .connect(config.MONGODB_URL)
+    .connect(config.MONGODB_URI)
     .then(() => {
-        logger.info("connected to", config.MONGODB_URL);
+        logger.info("connected to", config.MONGODB_URI);
     })
     .catch((error) => {
         logger.error("error connecting to MangoDB:", error.message);
