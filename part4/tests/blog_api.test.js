@@ -214,6 +214,62 @@ describe("when there is initially one user in db", () => {
     });
 });
 
+describe("when there is initially one user in the database", () => {
+    beforeEach(async () => {
+        await Blog.deleteMany({});
+        await User.deleteMany({});
+
+        const user = new User({ username: "root", password: "sekret" });
+        await user.save();
+    });
+    test("a valid blog can be added and it is linked to the user", async () => {
+        const usersAtStart = await User.find({});
+        const user = usersAtStart[0];
+
+        const newBlog = {
+            title: "Test blog",
+            author: "Test author",
+            url: "http://test.com",
+            likes: 10,
+            userId: user.id,
+        };
+
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .expect(201)
+            .expect("Content-Type", /application\/json/);
+
+        const blogsAtEnd = await Blog.find({});
+        expect(blogsAtEnd).toHaveLength(1);
+
+        const addedBlog = blogsAtEnd[0];
+        expect(addedBlog.user.toString()).toEqual(user.id.toString());
+    });
+
+    test("blogs returned by GET have populated user field", async () => {
+        const usersAtStart = await User.find({});
+        const user = usersAtStart[0];
+
+        const blog = new Blog({
+            title: "Test blog",
+            author: "Test author",
+            url: "http://test.com",
+            likes: 10,
+            user: user.id,
+        });
+        await blog.save();
+
+        const response = await api.get("/api/blogs").expect(200);
+        const blogs = response.body;
+
+        expect(blogs).toHaveLength(1);
+        expect(blogs[0].user).toBeDefined();
+        expect(blogs[0].user.username).toBeDefined();
+        expect(blogs[0].user.username).toEqual("root");
+    });
+});
+
 afterAll(async () => {
     await mongoose.connection.close();
 });
