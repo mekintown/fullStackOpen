@@ -96,6 +96,26 @@ test("delete blog", async () => {
     expect(blogsAtEnd).not.toContainEqual(blogToDelete);
 });
 
+test("update the number of likes for a blog post", async () => {
+    const initialBlogs = await helper.blogsInDb();
+    const blogToUpdate = initialBlogs[0]; // Assuming there is at least one blog post
+
+    const updatedBlog = { ...blogToUpdate, likes: 10 }; // New likes value for the blog post
+
+    await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedBlog)
+        .expect(200)
+        .expect("Content-Type", /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    const updatedBlogInDb = blogsAtEnd.find(
+        (blog) => blog.id === blogToUpdate.id
+    );
+
+    expect(updatedBlogInDb.likes).toBe(updatedBlog.likes);
+});
+
 afterAll(async () => {
     await mongoose.connection.close();
 });
