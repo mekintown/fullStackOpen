@@ -1,4 +1,5 @@
 const logger = require("./logger");
+const Blog = require("../models/blog");
 
 const requestLogger = (request, response, next) => {
     logger.info("Method:", request.method);
@@ -13,6 +14,15 @@ const tokenExtractor = (request, response, next) => {
     if (authorization && authorization.startsWith("Bearer ")) {
         request.token = authorization.replace("Bearer ", "");
     }
+
+    next();
+};
+
+const userExtractor = async (request, response, next) => {
+    const blog = await Blog.findById(request.params.id);
+    console.log(request.params.id);
+    console.log(request.params);
+    request.user = blog.user.toString();
 
     next();
 };
@@ -40,6 +50,7 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
     requestLogger,
     tokenExtractor,
+    userExtractor,
     unknownEndpoint,
     errorHandler,
 };
