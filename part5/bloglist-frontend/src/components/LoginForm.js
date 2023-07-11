@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ setUser, setNotification }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -25,7 +25,10 @@ const LoginForm = ({ setUser }) => {
             setUsername("");
             setPassword("");
         } catch (exception) {
-            //
+            setNotification(exception.response.data.error);
+            setTimeout(() => {
+                setNotification(null);
+            }, 5000);
         }
     };
 

@@ -4,10 +4,12 @@ import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import Notification from "./components/Notification";
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [user, setUser] = useState(null);
+    const [notification, setNotification] = useState("");
 
     const handleLogoutClick = () => {
         loginService.logout(setUser);
@@ -27,11 +29,24 @@ const App = () => {
     }, []);
 
     if (user === null) {
-        return <LoginForm setUser={setUser} />;
+        return (
+            <>
+                <Notification notification={notification} />
+                <LoginForm
+                    setUser={setUser}
+                    setNotification={setNotification}
+                />
+            </>
+        );
     }
     return (
         <div>
-            <BlogForm setBlogs={setBlogs} blogs={blogs} />
+            <Notification notification={notification} />
+            <BlogForm
+                setBlogs={setBlogs}
+                blogs={blogs}
+                setNotification={setNotification}
+            />
             <h2>blogs</h2>
             <p>
                 {user.username} logged in{" "}
