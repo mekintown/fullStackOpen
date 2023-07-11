@@ -9,6 +9,10 @@ const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [user, setUser] = useState(null);
 
+    const handleLogoutClick = () => {
+        loginService.logout(setUser);
+    };
+
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs));
     }, []);
@@ -22,15 +26,12 @@ const App = () => {
         }
     }, []);
 
-    const handleLogoutClick = () => {
-        loginService.logout(setUser);
-    };
-
     if (user === null) {
         return <LoginForm setUser={setUser} />;
     }
     return (
         <div>
+            <BlogForm setBlogs={setBlogs} blogs={blogs} />
             <h2>blogs</h2>
             <p>
                 {user.username} logged in{" "}
