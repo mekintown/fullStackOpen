@@ -83,15 +83,23 @@ const PersonForm = ({ persons, setPersons, setErrorMessage }) => {
             }
         }
 
-        personService.create(personObject).then((returnedPerson) => {
-            setPersons(persons.concat(returnedPerson));
-            setNewName("");
-            setNumber("");
-            setErrorMessage([false, `Added {newName}`]);
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 5000);
-        });
+        personService
+            .create(personObject)
+            .then((returnedPerson) => {
+                setPersons(persons.concat(returnedPerson));
+                setNewName("");
+                setNumber("");
+                setErrorMessage([false, `Added {newName}`]);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
+            })
+            .catch((error) => {
+                setErrorMessage([true, error.response.data.error]);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
+            });
     };
 
     const handleNameChange = (event) => {
