@@ -6,5 +6,10 @@ const login = async (credentials) => {
     return response.data;
 };
 
-const loginService = { login };
+const logout = (setUser) => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    setUser(null);
+};
+
+const loginService = { login, logout };
 export default loginService;

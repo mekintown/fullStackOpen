@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import loginService from "../services/login";
+import blogService from "../services/blogs";
 
 const LoginForm = ({ setUser }) => {
     const [username, setUsername] = useState("");
@@ -13,6 +14,13 @@ const LoginForm = ({ setUser }) => {
                 username,
                 password,
             });
+            window.localStorage.setItem(
+                "loggedBlogappUser",
+                JSON.stringify(user)
+            );
+
+            blogService.setToken(user.token);
+
             setUser(user);
             setUsername("");
             setPassword("");
