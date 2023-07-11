@@ -42,6 +42,12 @@ const App = () => {
 
     const blogFormRef = useRef();
 
+    const blogsStyle = {
+        display: "grid",
+        gridTemplateColumns: "repeat(1, minmax(250px, 1fr) )",
+        gap: "1rem",
+    };
+
     if (user === null) {
         return (
             <>
@@ -64,9 +70,11 @@ const App = () => {
                 {user.username} logged in{" "}
                 <button onClick={handleLogoutClick}>logout</button>
             </p>
-            {blogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} />
-            ))}
+            <div style={blogsStyle}>
+                {blogs.map((blog) => (
+                    <Blog key={blog.id} blog={blog} />
+                ))}
+            </div>
         </div>
     );
 };
