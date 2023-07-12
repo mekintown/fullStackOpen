@@ -19,7 +19,7 @@ describe("test blog", () => {
     };
 
     test("renders content", () => {
-        render(<Blog blog={blog} user={mockUser} />);
+        render(<Blog blog={blog} user={mockUser} />).container;
         const title = screen.getByText("TestTitle", { exact: false });
         expect(title).toBeDefined();
 
@@ -28,13 +28,29 @@ describe("test blog", () => {
     });
 
     test("after clicking the button, children are displayed", async () => {
-        const { container } = render(<Blog blog={blog} user={mockUser} />);
-
+        const container = render(
+            <Blog blog={blog} user={mockUser} />
+        ).container;
         const user = userEvent.setup();
         const button = screen.getByText("Hide");
         await user.click(button);
 
         const div = container.querySelector(".togglableContent");
         expect(div).not.toHaveStyle("display: none");
+    });
+
+    test.skip("clicking the button calls event handler twice", async () => {
+        const mockHandler = jest.fn();
+        const user = userEvent.setup();
+
+        render(<Blog blog={blog} user={mockUser} mockHandle={mockHandler} />);
+        const button = screen.getByText("like");
+
+        // Click the button twice
+        await user.click(button);
+        await user.click(button);
+
+        // Verify that the event handler was called twice
+        expect(mockHandler).toHaveBeenCalledTimes(2);
     });
 });
