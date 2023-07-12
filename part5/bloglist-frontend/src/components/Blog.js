@@ -13,11 +13,11 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
     const handleLikeClick = async () => {
         const newBlog = { ...blog, likes: blog.likes + 1 };
         const returnedBlog = await blogService.update(newBlog);
-        setBlogs(
-            blogs.map((oldBlog) => {
-                return oldBlog.id !== returnedBlog.id ? oldBlog : returnedBlog;
-            })
-        );
+        const newBlogs = blogs.map((oldBlog) => {
+            return oldBlog.id !== returnedBlog.id ? oldBlog : returnedBlog;
+        });
+        newBlogs.sort((a, b) => b.likes - a.likes);
+        setBlogs(newBlogs);
     };
 
     const blogStyle = {
