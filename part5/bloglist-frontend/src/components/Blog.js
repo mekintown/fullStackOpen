@@ -20,6 +20,20 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
         setBlogs(newBlogs);
     };
 
+    const handleRemoveClick = async (event) => {
+        if (
+            window.confirm(
+                `Delete ${event.target.parentNode.parentNode.firstElementChild.textContent}?`
+            )
+        ) {
+            await blogService.remove(blog.id);
+            const newBlogs = blogs.filter((oldBlog) => {
+                return oldBlog.id !== blog.id;
+            });
+            setBlogs(newBlogs);
+        }
+    };
+
     const blogStyle = {
         display: "flex",
         flexDirection: "column",
@@ -45,7 +59,10 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
                     likes: {blog.likes}{" "}
                     <button onClick={handleLikeClick}>like</button>
                 </p>
-                <h5>{user.name}</h5>
+                <h5>{blog.user.name}</h5>
+                {blog.user.username === user.username && (
+                    <button onClick={handleRemoveClick}>remove</button>
+                )}
             </div>
         </div>
     );
