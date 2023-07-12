@@ -1,5 +1,4 @@
 import axios from "axios";
-import Blog from "../components/Blog";
 const baseUrl = "http://localhost:3003/api/blogs";
 
 let token = null;
@@ -45,6 +44,5 @@ const remove = async (id) => {
     return response.data;
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
 const blogService = { getAll, create, update, remove, setToken };
 export default blogService;
