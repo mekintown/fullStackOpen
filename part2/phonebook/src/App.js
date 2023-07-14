@@ -4,7 +4,7 @@ import personService from "./services/persons";
 const Person = ({ name, number, id, setPersons, setErrorMessage }) => {
     const handleClick = (event) => {
         if (window.confirm(`Delete ${event.target}?`)) {
-            personService.remove(id).catch((esrror) => {
+            personService.remove(id).catch((error) => {
                 setErrorMessage([
                     true,
                     `Information of {newName} has already been removed from server`,

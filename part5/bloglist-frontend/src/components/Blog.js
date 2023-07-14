@@ -47,7 +47,7 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
     };
 
     return (
-        <div style={blogStyle}>
+        <div style={blogStyle} className="blog">
             <h3>
                 {blog.title} | {blog.author}
             </h3>

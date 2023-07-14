@@ -78,7 +78,7 @@ describe("Blog app", function () {
                 cy.contains("remove").click();
                 cy.should("not.contain", "Title1");
             });
-            it.only("only the creator can see the delete button of a blog, not anyone else.", function () {
+            it("only the creator can see the delete button of a blog, not anyone else", function () {
                 const user = {
                     name: "not Matti",
                     username: "notmluukkai",
@@ -88,6 +88,34 @@ describe("Blog app", function () {
                 cy.contains("logout").click();
                 cy.login({ username: "notmluukkai", password: "notsalainen" });
                 cy.contains("Show").click().should("not.contain", "remove");
+            });
+            it.only("blogs are ordered according to likes with the blog with the most likes being first", function () {
+                cy.get(".blog")
+                    .eq(1)
+                    .contains("Show")
+                    .click()
+                    .parent()
+                    .contains("like")
+                    .click()
+                    .get(".blog")
+                    .eq(0)
+                    .contains("Title2");
+
+                cy.get(".blog")
+                    .eq(2)
+                    .contains("Show")
+                    .click()
+                    .parent()
+                    .contains("like")
+                    .click()
+                    .parent()
+                    .contains("1")
+                    .parent()
+                    .contains("like")
+                    .click()
+                    .get(".blog")
+                    .eq(0)
+                    .contains("Title3");
             });
         });
     });

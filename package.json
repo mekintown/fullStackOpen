@@ -8,5 +8,8 @@
   },
   "author": "Maekin <maekin.nawmong@gmail.com>",
   "license": "ISC",
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "eslint-config-prettier": "^8.8.0"
+  }
 }
