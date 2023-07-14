@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
 import Blog from "./Blog";
 
-describe("test blog", () => {
+describe.only("test blog", () => {
     const mockUser = {
         name: "John Doe",
         username: "johndoe",
@@ -32,7 +32,7 @@ describe("test blog", () => {
             <Blog blog={blog} user={mockUser} />
         ).container;
         const user = userEvent.setup();
-        const button = screen.getByText("Hide");
+        const button = screen.getByText("Show");
         await user.click(button);
 
         const div = container.querySelector(".togglableContent");
