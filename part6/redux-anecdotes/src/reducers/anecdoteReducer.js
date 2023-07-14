@@ -27,6 +27,7 @@ const anecdoteSlice = createSlice({
 export const initializeAnecdote = () => {
 	return async (dispatch) => {
 		const anecdotes = await anecdoteService.getAll();
+		anecdotes.sort((a, b) => b.votes - a.votes);
 		dispatch(setAnecdote(anecdotes));
 	};
 };
