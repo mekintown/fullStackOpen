@@ -45,7 +45,7 @@ describe("Blog app", function () {
             cy.contains("authorTest");
         });
 
-        describe.only("When several blogs exist", function () {
+        describe("When several blogs exist", function () {
             beforeEach(function () {
                 cy.createBlog({
                     title: "Title1",
@@ -72,6 +72,22 @@ describe("Blog app", function () {
                     .click()
                     .parent()
                     .contains("1");
+            });
+            it("user who created a blog can delete it", function () {
+                cy.contains("Title1").parent().contains("Show").click();
+                cy.contains("remove").click();
+                cy.should("not.contain", "Title1");
+            });
+            it.only("only the creator can see the delete button of a blog, not anyone else.", function () {
+                const user = {
+                    name: "not Matti",
+                    username: "notmluukkai",
+                    password: "notsalainen",
+                };
+                cy.request("POST", `${Cypress.env("BACKEND")}/users`, user);
+                cy.contains("logout").click();
+                cy.login({ username: "notmluukkai", password: "notsalainen" });
+                cy.contains("Show").click().should("not.contain", "remove");
             });
         });
     });
