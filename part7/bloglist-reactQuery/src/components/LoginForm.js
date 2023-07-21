@@ -2,11 +2,13 @@ import { useState } from "react";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 import { useNotify } from "../NotificationContext";
+import { useLogin } from "../UserContext";
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const notifyWith = useNotify();
+	const login = useLogin();
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -20,7 +22,7 @@ const LoginForm = ({ setUser }) => {
 
 			blogService.setToken(user.token);
 
-			setUser(user);
+			login(user);
 			setUsername("");
 			setPassword("");
 		} catch (exception) {

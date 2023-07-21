@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
@@ -8,12 +8,15 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import { useNotify } from "./NotificationContext";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useLogin, useLogout, useUserValue } from "./UserContext";
 
 const App = () => {
-	const [user, setUser] = useState(null);
 	const notifyWith = useNotify();
 	const blogFormRef = useRef();
 	const queryClient = useQueryClient();
+	const login = useLogin();
+	const logout = useLogout();
+	const user = useUserValue();
 
 	const {
 		data: blogs,
@@ -31,14 +34,14 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
+			login(user);
 			blogService.setToken(user.token);
 		}
 	}, []);
 
 	const handleLogoutClick = () => {
-		loginService.logout(user);
-		setUser(null);
+		loginService.logout();
+		logout();
 	};
 
 	const addBlog = (blogObject) => {
@@ -61,7 +64,7 @@ const App = () => {
 		<div>
 			<Notification />
 			{user === null ? (
-				<LoginForm setUser={setUser} />
+				<LoginForm />
 			) : (
 				<>
 					<Togglable buttonLabel="new blog" ref={blogFormRef}>
