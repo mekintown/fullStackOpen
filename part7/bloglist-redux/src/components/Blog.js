@@ -1,7 +1,8 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
+import { useDispatch } from "react-redux";
+import { likeBlog, removeBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, user, blogs, setBlogs }) => {
+const Blog = ({ blog, user }) => {
 	const [visible, setVisible] = useState(false);
 
 	const showWhenVisible = { display: visible ? "" : "none" };
@@ -10,12 +11,10 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
 		setVisible(!visible);
 	};
 
+	const dispatch = useDispatch();
+
 	const handleLikeClick = async () => {
-		const newBlog = { ...blog, likes: blog.likes + 1 };
-		await blogService.update(newBlog);
-		const newBlogs = await blogService.getAll();
-		newBlogs.sort((a, b) => b.likes - a.likes);
-		setBlogs(newBlogs);
+		dispatch(likeBlog(blog));
 	};
 
 	const handleRemoveClick = async (event) => {
@@ -24,11 +23,7 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
 				`Delete ${event.target.parentNode.parentNode.firstElementChild.textContent}?`
 			)
 		) {
-			await blogService.remove(blog.id);
-			const newBlogs = blogs.filter((oldBlog) => {
-				return oldBlog.id !== blog.id;
-			});
-			setBlogs(newBlogs);
+			dispatch(removeBlog(blog.id));
 		}
 	};
 
