@@ -8,6 +8,7 @@ import Users from "./components/Users";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
+import User from "./components/User";
 
 const App = () => {
 	const login = useLogin();
@@ -46,6 +47,7 @@ const App = () => {
 				<Routes>
 					<Route path="/" element={<Blogs />} />
 					<Route path="/users" element={<Users />} />
+					<Route path="/users/:id" element={<User />} />
 				</Routes>
 			</Router>
 		</div>
