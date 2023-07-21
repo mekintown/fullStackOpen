@@ -50,6 +50,8 @@ const App = () => {
 		});
 	};
 
+	const byLikes = (b1, b2) => b2.likes - b1.likes;
+
 	if (isLoading) return <div>loading data...</div>;
 
 	if (isError)
@@ -70,7 +72,7 @@ const App = () => {
 						{user.username} logged in{" "}
 						<button onClick={handleLogoutClick}>logout</button>
 					</p>
-					{blogs.map((blog) => (
+					{blogs.sort(byLikes).map((blog) => (
 						<Blog key={blog.id} blog={blog} user={user} />
 					))}
 				</>

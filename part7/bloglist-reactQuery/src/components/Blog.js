@@ -1,36 +1,12 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
+import { useMutation, useQueryClient } from "react-query";
+import { useNotify } from "../NotificationContext";
 
-const Blog = ({ blog, user, blogs, setBlogs }) => {
+const Blog = ({ blog, user }) => {
 	const [visible, setVisible] = useState(false);
-
-	const showWhenVisible = { display: visible ? "" : "none" };
-
-	const toggleVisibility = () => {
-		setVisible(!visible);
-	};
-
-	const handleLikeClick = async () => {
-		const newBlog = { ...blog, likes: blog.likes + 1 };
-		await blogService.update(newBlog);
-		const newBlogs = await blogService.getAll();
-		newBlogs.sort((a, b) => b.likes - a.likes);
-		setBlogs(newBlogs);
-	};
-
-	const handleRemoveClick = async (event) => {
-		if (
-			window.confirm(
-				`Delete ${event.target.parentNode.parentNode.firstElementChild.textContent}?`
-			)
-		) {
-			await blogService.remove(blog.id);
-			const newBlogs = blogs.filter((oldBlog) => {
-				return oldBlog.id !== blog.id;
-			});
-			setBlogs(newBlogs);
-		}
-	};
+	const queryClient = useQueryClient();
+	const notifyWith = useNotify();
 
 	const blogStyle = {
 		display: "flex",
@@ -41,6 +17,35 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
 		padding: "0.5rem",
 		borderRadius: "0.25rem",
 		margin: "0rem, 1rem",
+	};
+
+	const showWhenVisible = { display: visible ? "" : "none" };
+
+	const likeMutation = useMutation(blogService.update, {
+		onSuccess: ({ title }) => {
+			queryClient.invalidateQueries("blogs");
+			notifyWith(`blog ${title} voted`);
+		},
+	});
+
+	const removeMutation = useMutation(blogService.remove, {
+		onSuccess: (id) => {
+			queryClient.invalidateQueries("blogs");
+			notifyWith(`blog ${id} removed`);
+		},
+	});
+
+	const toggleVisibility = () => setVisible(!visible);
+
+	const handleLikeClick = () => {
+		const newBlog = { ...blog, likes: blog.likes + 1 };
+		likeMutation.mutate(newBlog);
+	};
+
+	const handleRemoveClick = () => {
+		if (window.confirm(`Delete ${blog.title}?`)) {
+			removeMutation.mutate(blog.id);
+		}
 	};
 
 	return (
