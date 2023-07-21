@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { likeBlog, removeBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
 	const [visible, setVisible] = useState(false);
 
 	const showWhenVisible = { display: visible ? "" : "none" };
@@ -37,6 +37,8 @@ const Blog = ({ blog, user }) => {
 		borderRadius: "0.25rem",
 		margin: "0rem, 1rem",
 	};
+
+	const user = useSelector((state) => state.user);
 
 	return (
 		<div style={blogStyle} className="blog">

@@ -1,18 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
-import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import { displayNotification } from "./reducers/notificationReducer";
 import { initializeBlog, createBlog } from "./reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { setUserAndToken, setUser } from "./reducers/userReducer";
 
 const App = () => {
-	const [user, setUser] = useState(null);
-
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(initializeBlog());
@@ -24,13 +22,13 @@ const App = () => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
-			blogService.setToken(user.token);
+			dispatch(setUserAndToken(user));
 		}
 	}, []);
 
 	const handleLogoutClick = () => {
-		loginService.logout(setUser);
+		loginService.logout();
+		dispatch(setUser(null));
 	};
 
 	const addBlog = async (blogObject) => {
@@ -47,11 +45,13 @@ const App = () => {
 		gap: "1rem",
 	};
 
+	const user = useSelector((state) => state.user);
+
 	if (user === null) {
 		return (
 			<>
 				<Notification />
-				<LoginForm setUser={setUser} />
+				<LoginForm />
 			</>
 		);
 	}
