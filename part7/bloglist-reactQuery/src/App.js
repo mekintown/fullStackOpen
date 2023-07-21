@@ -7,18 +7,25 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import { useNotify } from "./NotificationContext";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const App = () => {
-	const [blogs, setBlogs] = useState([]);
 	const [user, setUser] = useState(null);
 	const notifyWith = useNotify();
+	const blogFormRef = useRef();
+	const queryClient = useQueryClient();
 
-	useEffect(() => {
-		blogService.getAll().then((blogs) => {
-			blogs.sort((a, b) => b.likes - a.likes);
-			setBlogs(blogs);
-		});
-	}, []);
+	const {
+		data: blogs,
+		isLoading,
+		isError,
+	} = useQuery("blogs", blogService.getAll);
+
+	const blogMutation = useMutation(blogService.create, {
+		onSuccess: () => {
+			queryClient.invalidateQueries("blogs");
+		},
+	});
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -30,56 +37,44 @@ const App = () => {
 	}, []);
 
 	const handleLogoutClick = () => {
-		loginService.logout(setUser);
+		loginService.logout(user);
+		setUser(null);
 	};
 
-	const addBlog = async (blogObject) => {
+	const addBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
-		const returnedBlog = await blogService.create(blogObject);
-		setBlogs(blogs.concat(returnedBlog));
-
-		notifyWith(`a new blog ${returnedBlog.title} added`);
+		blogMutation.mutate(blogObject, {
+			onSuccess: (newBlog) => {
+				notifyWith(`a new blog ${newBlog.title} added`);
+			},
+		});
 	};
 
-	const blogFormRef = useRef();
+	if (isLoading) return <div>loading data...</div>;
 
-	const blogsStyle = {
-		display: "grid",
-		gridTemplateColumns: "repeat(1, minmax(250px, 1fr) )",
-		gap: "1rem",
-	};
-
-	if (user === null) {
-		return (
-			<>
-				<Notification />
-				<LoginForm setUser={setUser} />
-			</>
-		);
-	}
+	if (isError)
+		return <div>anecdote service not available due to problems in server</div>;
 
 	return (
 		<div>
 			<Notification />
-			<Togglable buttonLabel="new blog" ref={blogFormRef}>
-				<BlogForm createBlog={addBlog} />
-			</Togglable>
-			<h2>blogs</h2>
-			<p>
-				{user.username} logged in{" "}
-				<button onClick={handleLogoutClick}>logout</button>
-			</p>
-			<div style={blogsStyle}>
-				{blogs.map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						user={user}
-						blogs={blogs}
-						setBlogs={setBlogs}
-					/>
-				))}
-			</div>
+			{user === null ? (
+				<LoginForm setUser={setUser} />
+			) : (
+				<>
+					<Togglable buttonLabel="new blog" ref={blogFormRef}>
+						<BlogForm createBlog={addBlog} />
+					</Togglable>
+					<h2>blogs</h2>
+					<p>
+						{user.username} logged in{" "}
+						<button onClick={handleLogoutClick}>logout</button>
+					</p>
+					{blogs.map((blog) => (
+						<Blog key={blog.id} blog={blog} user={user} />
+					))}
+				</>
+			)}
 		</div>
 	);
 };
