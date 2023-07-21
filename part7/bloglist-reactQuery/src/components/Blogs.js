@@ -1,21 +1,17 @@
 import { useEffect, useRef } from "react";
 import Blog from "./Blog";
-import LoginForm from "./LoginForm";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogs";
-import loginService from "../services/login";
-import Notification from "./Notification";
 import Togglable from "./Togglable";
 import { useNotify } from "../NotificationContext";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useLogin, useLogout, useUserValue } from "../UserContext";
+import { useLogin, useUserValue } from "../UserContext";
 
-const Home = () => {
+const Blogs = () => {
 	const notifyWith = useNotify();
 	const blogFormRef = useRef();
 	const queryClient = useQueryClient();
 	const login = useLogin();
-	const logout = useLogout();
 	const user = useUserValue();
 
 	const {
@@ -39,11 +35,6 @@ const Home = () => {
 		}
 	}, []);
 
-	const handleLogoutClick = () => {
-		loginService.logout();
-		logout();
-	};
-
 	const addBlog = (blogObject) => {
 		blogFormRef.current.toggleVisibility();
 		blogMutation.mutate(blogObject, {
@@ -62,26 +53,16 @@ const Home = () => {
 
 	return (
 		<div>
-			<Notification />
-			{user === null ? (
-				<LoginForm />
-			) : (
-				<>
-					<h2>blogs</h2>
-					<p>
-						{user.username} logged in{" "}
-						<button onClick={handleLogoutClick}>logout</button>
-					</p>
-					<Togglable buttonLabel="new blog" ref={blogFormRef}>
-						<BlogForm createBlog={addBlog} />
-					</Togglable>
-					{blogs.sort(byLikes).map((blog) => (
-						<Blog key={blog.id} blog={blog} user={user} />
-					))}
-				</>
-			)}
+			<>
+				<Togglable buttonLabel="new blog" ref={blogFormRef}>
+					<BlogForm createBlog={addBlog} />
+				</Togglable>
+				{blogs.sort(byLikes).map((blog) => (
+					<Blog key={blog.id} blog={blog} user={user} />
+				))}
+			</>
 		</div>
 	);
 };
 
-export default Home;
+export default Blogs;

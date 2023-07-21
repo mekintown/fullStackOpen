@@ -1,15 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useLogin, useLogout, useUserValue } from "./UserContext";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
 import { useEffect } from "react";
+import LoginForm from "./LoginForm";
+import blogService from "../services/blogs";
+import loginService from "../services/login";
+import Notification from "./Notification";
+import { useLogin, useLogout, useUserValue } from "../UserContext";
+import Blogs from "./Blogs";
 
-import Users from "./components/Users";
-import Notification from "./components/Notification";
-import LoginForm from "./components/LoginForm";
-import Blogs from "./components/Blogs";
-
-const App = () => {
+const Home = () => {
 	const login = useLogin();
 	const logout = useLogout();
 	const user = useUserValue();
@@ -40,16 +37,11 @@ const App = () => {
 						{user.username} logged in{" "}
 						<button onClick={handleLogoutClick}>logout</button>
 					</p>
+					<Blogs />
 				</>
 			)}
-			<Router>
-				<Routes>
-					<Route path="/" element={<Blogs />} />
-					<Route path="/users" element={<Users />} />
-				</Routes>
-			</Router>
 		</div>
 	);
 };
 
-export default App;
+export default Home;
