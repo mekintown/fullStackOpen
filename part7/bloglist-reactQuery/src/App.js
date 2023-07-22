@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useLogin, useLogout, useUserValue } from "./UserContext";
+import { useLogin, useUserValue } from "./UserContext";
 import blogService from "./services/blogs";
-import loginService from "./services/login";
 import { useEffect } from "react";
 
 import Users from "./components/Users";
@@ -10,10 +9,10 @@ import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
 import User from "./components/User";
 import Blog from "./components/Blog";
+import Header from "./components/Header";
 
 const App = () => {
 	const login = useLogin();
-	const logout = useLogout();
 	const user = useUserValue();
 
 	useEffect(() => {
@@ -25,33 +24,31 @@ const App = () => {
 		}
 	}, []);
 
-	const handleLogoutClick = () => {
-		loginService.logout();
-		logout();
+	const appStyle = {
+		fontFamily: "Poppins, sans-serif",
+		display: "flex",
+		flexDirection: "column",
+		gap: "20px",
 	};
 
 	return (
-		<div>
+		<div style={appStyle}>
 			<Notification />
 			{user === null ? (
 				<LoginForm />
 			) : (
 				<>
-					<h2>blogs</h2>
-					<p>
-						{user.username} logged in{" "}
-						<button onClick={handleLogoutClick}>logout</button>
-					</p>
+					<Router>
+						<Header />
+						<Routes>
+							<Route path="/" element={<Blogs />} />
+							<Route path="/users" element={<Users />} />
+							<Route path="/users/:id" element={<User />} />
+							<Route path="/blogs/:id" element={<Blog />} />
+						</Routes>
+					</Router>
 				</>
 			)}
-			<Router>
-				<Routes>
-					<Route path="/" element={<Blogs />} />
-					<Route path="/users" element={<Users />} />
-					<Route path="/users/:id" element={<User />} />
-					<Route path="/blogs/:id" element={<Blog />} />
-				</Routes>
-			</Router>
 		</div>
 	);
 };

@@ -4,6 +4,10 @@ import App from "./App";
 import { NotificationProvider } from "./NotificationContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { UserProvider } from "./UserContext";
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap"
+/>;
 
 const queryClient = new QueryClient();
 

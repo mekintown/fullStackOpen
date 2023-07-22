@@ -49,17 +49,21 @@ const Blogs = () => {
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "start",
-		backgroundColor: "#f1f5f9",
-		overflow: "scroll",
-		padding: "0.5rem",
+		backgroundColor: "#ffffff",
+		padding: "2rem",
 		borderRadius: "0.25rem",
-		margin: "0rem, 1rem",
+		boxShadow: "0 4px 6px 0 hsla(0, 0%, 0%, 0.2)",
+		textDecoration: "none",
+		color: "black",
+		maxWidth: "800px",
+		width: "100%",
+		margin: "1rem auto",
 	};
 
 	const blogWrapperStyle = {
 		display: "flex",
 		flexDirection: "column",
-		gap: "1rem",
+		gap: "2rem",
 	};
 
 	if (isLoading) return <div>loading data...</div>;

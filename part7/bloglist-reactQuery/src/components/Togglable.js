@@ -15,14 +15,36 @@ const Togglable = forwardRef(({ buttonLabel, children }, ref) => {
 		toggleVisibility,
 	}));
 
+	const buttonStyle = {
+		backgroundColor: "#0277bd",
+		color: "#ffffff",
+		padding: "0.5em 1em",
+		borderRadius: "4px",
+		border: "none",
+		cursor: "pointer",
+		marginTop: "1em",
+	};
+
+	const containerStyle = {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		marginTop: "1em",
+		width: "100vw",
+	};
+
 	return (
-		<div>
+		<div style={containerStyle}>
 			<div style={hideWhenVisible}>
-				<button onClick={toggleVisibility}>{buttonLabel}</button>
+				<button onClick={toggleVisibility} style={buttonStyle}>
+					{buttonLabel}
+				</button>
 			</div>
 			<div style={showWhenVisible}>
 				{children}
-				<button onClick={toggleVisibility}>cancel</button>
+				<button onClick={toggleVisibility} style={buttonStyle}>
+					Cancel
+				</button>
 			</div>
 		</div>
 	);
