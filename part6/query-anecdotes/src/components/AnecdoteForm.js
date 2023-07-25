@@ -9,7 +9,25 @@ const AnecdoteForm = () => {
 		onSuccess: (newAnecdote) => {
 			const anecdotes = queryClient.getQueryData("anecdotes");
 			queryClient.setQueryData("anecdotes", anecdotes.concat(newAnecdote));
-			// queryClient.invalidateQueries("anecdotes");
+
+			dispatch({
+				type: "SET_NOTIFICATION",
+				payload: `You created ${newAnecdote.content}`,
+			});
+
+			setTimeout(() => {
+				dispatch({ type: "CLEAR_NOTIFICATION" });
+			}, 5000);
+		},
+		onError: (error) => {
+			dispatch({
+				type: "SET_NOTIFICATION",
+				payload: error.response.data.error,
+			});
+
+			setTimeout(() => {
+				dispatch({ type: "CLEAR_NOTIFICATION" });
+			}, 5000);
 		},
 	});
 
@@ -18,14 +36,6 @@ const AnecdoteForm = () => {
 		const content = event.target.anecdote.value;
 		event.target.value = "";
 		newAnecdoteMutation.mutate({ content, votes: 0 });
-		dispatch({
-			type: "SET_NOTIFICATION",
-			payload: `You created ${content}`,
-		});
-
-		setTimeout(() => {
-			dispatch({ type: "CLEAR_NOTIFICATION" });
-		}, 5000);
 	};
 
 	return (
