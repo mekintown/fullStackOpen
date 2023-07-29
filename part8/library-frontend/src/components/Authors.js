@@ -18,16 +18,32 @@ const AuthorForm = () => {
 		setBorn("");
 	};
 
+	const { loading, error, data } = useQuery(ALL_AUTHORS);
+
+	if (loading) {
+		return <p>Loading...</p>;
+	}
+
+	if (error) {
+		return <p>Error: {error.message}</p>;
+	}
+
 	return (
 		<div>
 			<h2>Set birthyear</h2>
 			<form onSubmit={handleSubmit}>
 				<label>
 					name
-					<input
+					<select
 						value={author}
 						onChange={({ target }) => setAuthor(target.value)}
-					></input>
+					>
+						{data.allAuthors.map((author) => (
+							<option value={author.name} key={author.id}>
+								{author.name}
+							</option>
+						))}
+					</select>
 				</label>
 				<label>
 					born
