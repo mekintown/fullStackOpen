@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
 const Book = require("./models/book");
+const { GraphQLError } = require("graphql");
 
 require("dotenv").config();
 
@@ -88,7 +89,6 @@ const resolvers = {
 	},
 	Author: {
 		bookCount: async (root) => {
-			// Use Mongoose's countDocuments method to count the number of books associated with the author.
 			const bookCount = await Book.countDocuments({ author: root._id });
 			return bookCount;
 		},
@@ -105,7 +105,17 @@ const resolvers = {
 
 			// Create and save the book
 			const book = new Book({ ...args, author: author._id });
-			await book.save();
+			try {
+				await book.save();
+			} catch (error) {
+				throw new GraphQLError("Saving book failed", {
+					extensions: {
+						code: "BAD_USER_INPUT",
+						invalidArgs: args.title,
+						error,
+					},
+				});
+			}
 
 			await book.populate("author", {
 				name: 1,
@@ -119,7 +129,15 @@ const resolvers = {
 
 			try {
 				await author.save();
-			} catch (error) {}
+			} catch (error) {
+				throw new GraphQLError("Editing birth year failed", {
+					extensions: {
+						code: "BAD_USER_INPUT",
+						invalidArgs: args.name,
+						error,
+					},
+				});
+			}
 
 			return author;
 		},
