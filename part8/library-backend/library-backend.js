@@ -60,26 +60,37 @@ const resolvers = {
 	Query: {
 		bookCount: () => Book.collection.countDocuments(),
 		authorCount: () => Author.collection.countDocuments(),
-		allBooks: (root, args) => {
+		allBooks: async (root, args) => {
 			const filter = {};
 
 			if (args.author) {
-				filter.author = args.author;
+				const author = await Author.findOne({ name: args.author });
+				if (author) {
+					filter.author = author._id;
+				} else {
+					// If the author doesn't exist, return an empty array of books.
+					return [];
+				}
 			}
 
 			if (args.genre) {
 				filter.genres = args.genre;
 			}
 
-			return Book.find(filter);
+			return await Book.find(filter).populate("author", {
+				name: 1,
+				born: 1,
+			});
 		},
-		allAuthors: () => {
-			return Author.find({});
+		allAuthors: async () => {
+			return await Author.find({});
 		},
 	},
 	Author: {
-		bookCount: (root) => {
-			return Book.countDocuments({ author: root.name });
+		bookCount: async (root) => {
+			// Use Mongoose's countDocuments method to count the number of books associated with the author.
+			const bookCount = await Book.countDocuments({ author: root._id });
+			return bookCount;
 		},
 	},
 	Mutation: {
@@ -103,7 +114,7 @@ const resolvers = {
 			return book;
 		},
 		editAuthor: async (root, args) => {
-			const author = await Author.findOne({ name: args.author });
+			const author = await Author.findOne({ name: args.name });
 			author.born = args.setBornTo;
 
 			try {
