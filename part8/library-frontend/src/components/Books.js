@@ -4,11 +4,20 @@ import { useEffect, useState } from "react";
 
 const Books = (props) => {
 	const [selectedGenre, setSelectedGenre] = useState(null);
-	const [fetchedGenres, setFetchedGenres] = useState([]);
+	const [allGenres, setAllGenres] = useState(null);
 
 	const result = useQuery(ALL_BOOKS, {
 		variables: { genre: selectedGenre },
 	});
+
+	const allBooksResult = useQuery(ALL_BOOKS);
+	useEffect(() => {
+		if (allBooksResult.data) {
+			const genres = allBooksResult.data.allBooks.map((book) => book.genres);
+			const uniqueGenres = [...new Set(genres.flat())];
+			setAllGenres(uniqueGenres);
+		}
+	}, [allBooksResult.data]);
 
 	useEffect(() => {
 		result.refetch();
@@ -23,12 +32,6 @@ const Books = (props) => {
 	}
 
 	const books = result.data.allBooks;
-
-	if (fetchedGenres.length === 0) {
-		const genres = books.map((book) => book.genres);
-		const uniqueGenres = [...new Set(genres.flat())];
-		setFetchedGenres(uniqueGenres);
-	}
 
 	const handleGenreClick = ({ target }) => {
 		setSelectedGenre(target.value);
@@ -54,7 +57,7 @@ const Books = (props) => {
 					))}
 				</tbody>
 			</table>
-			{fetchedGenres.map((genre) => (
+			{allGenres.map((genre) => (
 				<button value={genre} key={genre} onClick={handleGenreClick}>
 					{genre}
 				</button>
