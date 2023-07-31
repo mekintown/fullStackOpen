@@ -13,6 +13,7 @@ const AuthorForm = () => {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		console.log(author, born);
 		editBirthYear({ variables: { name: author, setBornTo: parseInt(born) } });
 		setAuthor("");
 		setBorn("");
@@ -38,6 +39,10 @@ const AuthorForm = () => {
 						value={author}
 						onChange={({ target }) => setAuthor(target.value)}
 					>
+						<option disabled value="">
+							{" "}
+							-- select an option --{" "}
+						</option>
 						{data.allAuthors.map((author) => (
 							<option value={author.name} key={author.id}>
 								{author.name}
