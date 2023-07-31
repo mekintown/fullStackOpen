@@ -6,11 +6,7 @@ const LoginForm = ({ show, setToken }) => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
-	const [login, result] = useMutation(LOGIN, {
-		onError: (error) => {
-			// setError(error.graphQLErrors[0].message);
-		},
-	});
+	const [login, result] = useMutation(LOGIN);
 
 	useEffect(() => {
 		if (result.data) {
