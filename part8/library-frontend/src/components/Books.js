@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
+import { useQuery, useSubscription } from "@apollo/client";
+import { ALL_BOOKS, BOOK_ADDED } from "../queries";
 import { useEffect, useState } from "react";
 
 const Books = (props) => {
@@ -22,6 +22,12 @@ const Books = (props) => {
 	useEffect(() => {
 		result.refetch();
 	}, [selectedGenre]);
+
+	useSubscription(BOOK_ADDED, {
+		onData: ({ data }) => {
+			alert(`book added ${data.data.bookAdded.title}`);
+		},
+	});
 
 	if (!props.show) {
 		return null;
