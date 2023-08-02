@@ -3,7 +3,7 @@ interface calculateValues {
 	weight: number;
 }
 
-const parseArguments = (args: string[]): calculateValues => {
+export const parseArguments = (args: string[]): calculateValues => {
 	if (args.length < 4) throw new Error("Not enough arguments");
 
 	if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
@@ -16,7 +16,7 @@ const parseArguments = (args: string[]): calculateValues => {
 	}
 };
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
 	const bmi = weight / (height / 100) ** 2;
 
 	if (bmi < 16) {
