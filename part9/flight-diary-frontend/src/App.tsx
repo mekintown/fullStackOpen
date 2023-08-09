@@ -21,8 +21,8 @@ const App = () => {
 
   return (
     <div>
-      <DiaryListPage diaries={diaries} />
       <AddDiaryForm setDiaries={setDiaries} />
+      <DiaryListPage diaries={diaries} />
     </div>
   );
 };

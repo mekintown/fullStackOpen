@@ -7,6 +7,7 @@ interface DiaryProps {
 const DiaryListPage = ({ diaries }: DiaryProps) => {
   return (
     <div>
+      <h2>Diary entries</h2>
       {Object.values(diaries).map((diary) => (
         <div key={diary.id}>
           <h3>
