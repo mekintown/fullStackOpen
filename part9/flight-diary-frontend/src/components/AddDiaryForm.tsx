@@ -48,24 +48,79 @@ const AddDiaryForm = ({ setDiaries }: AddDiaryFormProps) => {
         <label htmlFor="date">date: </label>
         <input
           id="date"
-          type="text"
+          type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         ></input>
-        <label htmlFor="weather">weather: </label>
-        <input
-          id="weather"
-          type="text"
-          value={weather}
-          onChange={(e) => setWeather(e.target.value)}
-        ></input>
-        <label htmlFor="visibility">visibility: </label>
-        <input
-          id="visibility"
-          type="text"
-          value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
-        ></input>
+        <legend>Select a weather:</legend>
+        <div>
+          <input
+            id="sunny"
+            type="radio"
+            name="weather"
+            onChange={() => setWeather("sunny")}
+          />
+          <label htmlFor="sunny">Sunny</label>
+          <input
+            id="rainy"
+            type="radio"
+            name="weather"
+            onChange={() => setWeather("rainy")}
+          />
+          <label htmlFor="rainy">Rainy</label>
+          <input
+            id="cloudy"
+            type="radio"
+            name="weather"
+            onChange={() => setWeather("cloudy")}
+          />
+          <label htmlFor="cloudy">Cloudy</label>
+          <input
+            id="stormy"
+            type="radio"
+            name="weather"
+            onChange={() => setWeather("stormy")}
+          />
+          <label htmlFor="stormy">Stormy</label>
+          <input
+            id="windy"
+            type="radio"
+            name="weather"
+            onChange={() => setWeather("windy")}
+          />
+          <label htmlFor="windy">Windy</label>
+        </div>
+        <legend>Select visibility:</legend>
+        <div>
+          <input
+            id="great"
+            type="radio"
+            name="visibility"
+            onChange={() => setVisibility("great")}
+          />
+          <label htmlFor="great">Great</label>
+          <input
+            id="good"
+            type="radio"
+            name="visibility"
+            onChange={() => setVisibility("good")}
+          />
+          <label htmlFor="good">Good</label>
+          <input
+            id="ok"
+            type="radio"
+            name="visibility"
+            onChange={() => setVisibility("ok")}
+          />
+          <label htmlFor="ok">Ok</label>
+          <input
+            id="poor"
+            type="radio"
+            name="visibility"
+            onChange={() => setVisibility("poor")}
+          />
+          <label htmlFor="poor">Poor</label>
+        </div>
         <label htmlFor="comment">comment: </label>
         <input
           id="comment"
