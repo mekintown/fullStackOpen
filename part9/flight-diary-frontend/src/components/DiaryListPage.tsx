@@ -9,8 +9,9 @@ const DiaryListPage = ({ diaries }: DiaryProps) => {
     <div>
       {Object.values(diaries).map((diary) => (
         <div key={diary.id}>
-          <p>{diary.id}</p>
-          <h3>{diary.date}</h3>
+          <h3>
+            {diary.id} : {diary.date}
+          </h3>
           <p>{diary.weather}</p>
           <p>{diary.visibility}</p>
         </div>

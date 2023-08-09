@@ -4,6 +4,7 @@ import axios from "axios";
 import diaryService from "./services/diary";
 import DiaryListPage from "./components/DiaryListPage";
 import { Diary } from "./types";
+import AddDiaryForm from "./components/AddDiaryForm";
 
 const App = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
@@ -21,6 +22,7 @@ const App = () => {
   return (
     <div>
       <DiaryListPage diaries={diaries} />
+      <AddDiaryForm setDiaries={setDiaries} />
     </div>
   );
 };
