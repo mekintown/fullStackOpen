@@ -1,0 +1,40 @@
+import { useParams } from "react-router-dom";
+import patientService from "../services/patients";
+import { useEffect, useState } from "react";
+import { Patient } from "../types";
+
+const PatientInfoPage = () => {
+  const [patient, setPatient] = useState<Patient>();
+  const id = useParams().id;
+
+  useEffect(() => {
+    const fetchPatientInfo = async () => {
+      if (id) {
+        const patient = await patientService.get(id);
+        setPatient(patient);
+      }
+    };
+    fetchPatientInfo();
+  }, [id]);
+
+  if (!patient) {
+    return (
+      <div>
+        <p>no information</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3>
+        {patient.name} | {patient.gender}
+      </h3>
+
+      <p>ssh: {patient.ssn}</p>
+      <p>occupation: {patient.occupation}</p>
+    </div>
+  );
+};
+
+export default PatientInfoPage;
