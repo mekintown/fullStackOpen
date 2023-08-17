@@ -54,6 +54,41 @@ const parseOccupation = (occupation: unknown): string => {
   return occupation;
 };
 
+const isEntry = (entry: unknown): entry is Entry => {
+  if (!entry || typeof entry !== "object") {
+    return false;
+  }
+  if ("type" in entry && typeof (entry as Entry).type === "string") {
+    return ["Hospital", "OccupationalHealthcare", "HealthCheck"].includes(
+      (entry as Entry).type
+    );
+  }
+  return false;
+};
+
+const parseEntries = (entries: unknown): Entry[] => {
+  if (Array.isArray(entries)) {
+    const validEntries: Entry[] = [];
+    const invalidEntries: unknown[] = [];
+
+    entries.forEach((entry) => {
+      if (isEntry(entry)) {
+        validEntries.push(entry);
+      } else {
+        invalidEntries.push(entry);
+      }
+    });
+
+    if (invalidEntries.length > 0) {
+      throw new Error(`Incorrect entries: ${invalidEntries.join(", ")}`);
+    }
+
+    return validEntries;
+  } else {
+    throw new Error("Invalid entries format");
+  }
+};
+
 const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data");
@@ -73,7 +108,8 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
       ssn: parseSsn(object.ssn),
       gender: parseGender(object.gender),
       occupation: parseOccupation(object.occupation),
-      entries: object.entries as Entry[],
+      // entries: object.entries as Entry[],
+      entries: parseEntries(object.entries),
     };
 
     return newEntry;
