@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
-import { Patient } from "../types";
+import { DiagnoseEntry, Patient } from "../types";
+import diagnoseService from "../services/diagnose";
 
 const PatientInfoPage = () => {
   const [patient, setPatient] = useState<Patient>();
+  const [diagnoses, setDiagnoses] = useState<DiagnoseEntry[]>();
   const id = useParams().id;
 
   useEffect(() => {
@@ -16,6 +18,14 @@ const PatientInfoPage = () => {
     };
     fetchPatientInfo();
   }, [id]);
+
+  useEffect(() => {
+    const fetchDiagnosesInfo = async () => {
+      const diagnoses = await diagnoseService.getAll();
+      setDiagnoses(diagnoses)
+    }
+    fetchDiagnosesInfo();
+  }, [])
 
   if (!patient) {
     return (
@@ -38,10 +48,25 @@ const PatientInfoPage = () => {
         <p>{entry.date} | {entry.description}</p>
         {entry.diagnosisCodes ? (
   <ul>
-    {entry.diagnosisCodes.map((code) => (
-      <li key={code}>{code}</li>
-    ))}
-  </ul>
+  {entry.diagnosisCodes.map((code) => {
+    if (diagnoses) {
+      const diagnosis = diagnoses.find((diagnosis) => diagnosis.code === code);
+      if (diagnosis) {
+        return (
+          <li key={code}>
+            {code} - {diagnosis.name}
+          </li>
+        );
+      } 
+    }else {
+      return (
+        <li key={code}>
+          {code} - Diagnosis not found
+        </li>
+      );
+    }
+  })}
+</ul>
 ) : (
   <p>No diagnosis codes available.</p>
 )}
